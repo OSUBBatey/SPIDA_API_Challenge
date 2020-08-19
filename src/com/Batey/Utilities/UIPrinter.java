@@ -104,6 +104,8 @@ public class UIPrinter {
 		System.out.println();
 	}
 	
+	
+	
 	/**
 	 * 
 	 * @param input
@@ -111,6 +113,7 @@ public class UIPrinter {
 	 */
 	public String promptUserForJobID(Scanner input){		
 		//TODO: SETUP ERROR CHECKING - empty string etc
+		//TODO: CONSOLIDATE ALL THE FUNCTIONS LIKE THIS AND PASS AN ENUM FOR THE STRING
 		String strOut = "";
 		System.out.print("Please enter the ID for the position you would like to apply for: ");		
 		strOut = input.nextLine();

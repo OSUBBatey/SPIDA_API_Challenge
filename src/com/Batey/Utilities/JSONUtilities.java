@@ -75,6 +75,12 @@ public class JSONUtilities {
 		return result;
 	}
 	
+	/**
+	 * 
+	 * @param obj
+	 * @param arrName
+	 * @return
+	 */
 	public List<String> getArrayFromJSONObject(JSONObject obj, String arrName) {
 		
 		//Create list for output return
@@ -89,7 +95,7 @@ public class JSONUtilities {
 				outputList.add(buffer.getString(i));
 			}
 		}catch (org.json.JSONException e){			
-			System.err.printf("Invalid JSON array structure recieved: %s", e.getMessage());			
+			System.err.printf("Invalid JSON array structure received: %s", e.getMessage());			
 		}
 		//Return result
 		return outputList;
@@ -102,6 +108,7 @@ public class JSONUtilities {
 	 * @return
 	 */
 	public JSONObject createJSONObjectFromArray(String[] valueArray, String[] keyArray) {
+		//TODO: MAYBE USE A MAP INSTEAD
 		JSONObject temp = new JSONObject();
 		for(int i=0; i<valueArray.length-1;i++) {
 			temp.put(keyArray[i], valueArray[i]);
@@ -113,7 +120,7 @@ public class JSONUtilities {
 	 * 
 	 * @param arrIn
 	 */
-	public void populateApplicationArr(String[] arrIn, JSONObject obj) {
+	public void populateApplicationArr(String[] arrIn, JSONObject obj) {		
 		arrIn[0] = obj.getString(schemaMembers.JOBID.toString());
 		arrIn[1] = obj.getString(schemaMembers.NAME.toString());
 		arrIn[2] = obj.getString(schemaMembers.JUSTIFICATION.toString());

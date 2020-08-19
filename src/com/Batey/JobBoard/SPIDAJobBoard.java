@@ -22,9 +22,10 @@ public class SPIDAJobBoard {
 	//Create Needed Objects
 	JSONUtilities jSONUtility = new JSONUtilities();
 	StringUtilities stringUtility = new StringUtilities();
-	UIPrinter sysPrinter = new UIPrinter();
+	UIPrinter printUtility = new UIPrinter();
 	NetworkModule networkUtility = new NetworkModule();
 	Scanner console = new Scanner(System.in);
+	
 	final String JOBS_ENDPOINT = "https://dev.spidasoftware.com/apply/jobs";
 	final String APPS_ENDPOINT = "https://dev.spidasoftware.com/apply/applications";
 	
@@ -34,18 +35,18 @@ public class SPIDAJobBoard {
 	 */
 	public void run() {
 		
-		//Run loop variable
+		//Loop variable for User Input
 		int userMenuChoice = -1;	
 		
 		//Get User Choice and Perform Appropriate Operation
 		while(userMenuChoice != 4) {
 			//Print UI/Menu Options
-			sysPrinter.printIntroUI();
-			sysPrinter.printUserMenu();
+			printUtility.printIntroUI();
+			printUtility.printUserMenu();
 			
 			try {
 			//Get User choice to control program loop		
-			userMenuChoice = sysPrinter.getMenuInput(console);		
+			userMenuChoice = printUtility.getMenuInput(console);		
 			//Select Function
 			selectFunction(userMenuChoice);
 			
@@ -55,6 +56,7 @@ public class SPIDAJobBoard {
 			}
 		}
 		
+		//Display Exit Message
 		System.out.print("Goodbye!!!");
 		
 		//Cleanup - release resources
@@ -68,7 +70,7 @@ public class SPIDAJobBoard {
 	private void selectFunction(int input) {
 		
 		if(input == 1) {
-			//Display results if successful, prompt user for another action if not
+			//Display all job postings
 			displayAllJobPostings();
 			
 		}else if(input == 2) {
@@ -79,7 +81,7 @@ public class SPIDAJobBoard {
 		}else if(input == 3) {
 			//Perform Job Posting Status Lookup Procedure
 			checkApplicationStatus();
-		}else {
+		}else {//Input is invalid or user has chosen to exit the program
 			if(input !=4) {
 				System.out.println("ERROR: Selection is out of Range. Please try again.");
 				System.out.println();
@@ -88,7 +90,8 @@ public class SPIDAJobBoard {
 	}
 	
 	/**
-	 * Write this stuff.
+	 * Performs a GET request to the endpoint specified at @JOBS_ENDPOINT . 
+	 * Retrieves all postings with the designated schema and prints them to the console.
 	 */
 	private void displayAllJobPostings() {
 		
@@ -104,27 +107,31 @@ public class SPIDAJobBoard {
 		//Ensure Posts Exist and print to console
 		if(jobList.size() > 0) {			
 			//Print header
-			sysPrinter.printJobPostingHeader();
+			printUtility.printJobPostingHeader();
 			
 			//Verify Schema	and Print Valid Results	
 			for(JSONObject ele : jobList) {
 				if(jSONUtility.verifyJobPostingSchema(ele)) {
-					//Pass Object to UI Printer for formatting
+					
+					//Pass Object Values to UI Printer for formatting
 					String id = ele.getString(schemaMembers.ID.toString());
 					String pos = ele.getString(schemaMembers.POSITION.toString());				
 					String desc = ele.getString(schemaMembers.DESCRIPTION.toString());
 					
+					//Requirements is an optional attribute per the schema, check if it exists and act appropriately
 					if(ele.has("requirements")) {
-						//Get requirements from object
+						//Get requirements from JSON object
 						List<String> reqList = jSONUtility.getArrayFromJSONObject(ele, schemaMembers.REQUIREMENTS.toString());
 						
 						//Call Printer Class for job element
-						sysPrinter.printJobPosting(id, pos, reqList,  desc);
-					}else {
+						printUtility.printJobPosting(id, pos, reqList,  desc);
+						
+					}else {//If Requirements attribute is not present
+						
 						//Call Printer Class for job element
-						sysPrinter.printJobPosting(id, pos, desc);
+						printUtility.printJobPosting(id, pos, desc);
 					}
-				}else {
+				}else {//Report incorrect schema and continue
 					System.out.println("ERROR: An element with an incorrect schema was found!! \n Discarding element!");
 				}
 			}			
@@ -134,7 +141,9 @@ public class SPIDAJobBoard {
 	}
 	
 	/**
-	 * 
+	 * Takes a jobID from user input. Performs a get request to the specified endpoint to ensure job posting exists and
+	 * begins a user data collection procedure. Creates a JSON object and posts it to the server using the appropriate endpoint. Prints
+	 * response data to the console.  
 	 */
 	private void applyToPosting() {
 		/*
@@ -152,7 +161,7 @@ public class SPIDAJobBoard {
 		networkUtility.clearResponseData();
 		
 		//Print User Input Prompt
-		userValueArr[0] = sysPrinter.promptUserForJobID(console);		
+		userValueArr[0] = printUtility.promptUserForJobID(console);		
 		
 		//Check that id is of valid format (24 Hex characters)
 		if(stringUtility.verifyIDString(userValueArr[0])) {			
@@ -166,12 +175,12 @@ public class SPIDAJobBoard {
 				//TODO:Display prompt with job posting and confirm with user that it is correct
 				
 				//Display prompts to get user inputs for posting attributes								
-				userValueArr[1] = sysPrinter.promptUserForName(console);
-				userValueArr[2] = sysPrinter.promptUserForJustification(console);	
-				userValueArr[3] = sysPrinter.promptUserForProjectLink(console);
+				userValueArr[1] = printUtility.promptUserForName(console);
+				userValueArr[2] = printUtility.promptUserForJustification(console);	
+				userValueArr[3] = printUtility.promptUserForProjectLink(console);
 				
 				//TODO: Create array with these values
-				userValueArr[4] = sysPrinter.promptUserForAdditionalLink(console);
+				userValueArr[4] = printUtility.promptUserForAdditionalLink(console);
 				
 				//Create JSON Object
 				JSONObject application = jSONUtility.createJSONObjectFromArray(userValueArr, userKeyArr);
@@ -180,7 +189,10 @@ public class SPIDAJobBoard {
 				networkUtility.performPOSTRequest(APPS_ENDPOINT, application.toString());
 				
 				//Display Return headers/ Success
+				System.out.println("Posting Successful!!");
+				System.out.print("Server Response: ");
 				System.out.println(networkUtility.getResponseData());
+				
 			}else {
 				System.out.println("ERROR: No Job Posting found with that ID!!");
 			}
@@ -190,16 +202,15 @@ public class SPIDAJobBoard {
 	}
 	
 	/**
-	 * 
+	 * Performs a GET request for a specified application ID and prints the results to the console. 
 	 */
 	private void checkApplicationStatus() {
 		
 		//Setup Variables
-		String applicationID = sysPrinter.promptUserForStatusID(console);
+		String applicationID = printUtility.promptUserForStatusID(console);
 		
 		//Ensure properID is given
-		if(stringUtility.verifyIDString(applicationID)){			
-			String[] applicationAttributeArr = {"name", "justification", "code", "jobId", "additionalLinks"}; //TODO:MOVE THIS ELSEWHERE
+		if(stringUtility.verifyIDString(applicationID)){
 			
 			//Clear Network Object Response Data
 			networkUtility.clearResponseData();
@@ -223,7 +234,7 @@ public class SPIDAJobBoard {
 					jSONUtility.populateApplicationArr(appValueArr, applicationJSON);
 					
 					//Display application Status
-					sysPrinter.printApplicationStatus(appValueArr);
+					printUtility.printApplicationStatus(appValueArr);
 				}else {
 					System.out.println("ERROR: Application Object does not follow given schema!!");
 				}
