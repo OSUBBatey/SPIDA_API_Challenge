@@ -9,16 +9,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-
+/**
+ * Network module containing utilites for GET with and without parameters, POST with parameters and clearing/retrieving the 
+ * response data.
+ * @author Brian Batey
+ *
+ */
 public class NetworkModule {
 	
 	//Class object Variables
 	private String data = "";
 
 	/**
-	 * 
+	 * Takes a buffered input stream and converts it to a String.
 	 * @param readerIn
+	 * 		- the buffered input stream
 	 * @return
+	 * 		- a string value
 	 */
 	private static String responseToString(BufferedReader readerIn){
 	    StringBuilder sb = new StringBuilder();
@@ -35,7 +42,7 @@ public class NetworkModule {
 	}	
 	
 	/**
-	 * 
+	 * Returns the stored response data for @this. Response data is updated after GET/POST operations and clear operations.
 	 * @return
 	 */
 	public String getResponseData() {
@@ -43,9 +50,13 @@ public class NetworkModule {
 	}
 		
 	/**
-	 * 
+	 * Perform a GET request to the specified URL with no parameters.
 	 * @param endpointURL
+	 * 		- a string representing the desired endpoint to request from
 	 * @return
+	 * 		- an integer representing the responseCode received from the endpoint
+	 * @updates
+	 * 		- updates @this.data with the body data received from the GET request
 	 */
 	public int performGETRequest(String endpointURL){
 		
@@ -89,9 +100,13 @@ public class NetworkModule {
 	}
 	
 	/**
-	 * 
+	 * Perform a GET request to the specified URL with given parameters.
 	 * @param endpointURL
+	 * 		- a string representing the desired endpoint to request from
 	 * @return
+	 * 		- an integer representing the responseCode received from the endpoint
+	 * @updates
+	 * 		- updates @this.data with the body data received from the GET request
 	 */
 	public int performGETRequest(String endpointURL, String param){
 		
@@ -135,9 +150,16 @@ public class NetworkModule {
 	}
 	
 	/**
+	 * Perform a POST request to the specified URL using the given data and JSON encoding.
 	 * 
 	 * @param endpointURL
+	 * 		- a string representing the desired endpoint to request from
+	 * @param jsonData
+	 * 		- a string representing a JSON object to be POSTed to the endpoint
 	 * @return
+	 * 		- an integer representing the responseCode received from the endpoint
+	 * @updates
+	 * 		- updates @this.data with the response data received from the POST request
 	 */
 	public int performPOSTRequest(String endpointURL, String jsonData){
 		
