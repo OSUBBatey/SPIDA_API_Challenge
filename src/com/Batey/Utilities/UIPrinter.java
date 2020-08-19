@@ -167,4 +167,21 @@ public class UIPrinter {
 		strOut = input.nextLine();
 		return strOut;
 	}
+	
+	/**
+	 * 
+	 * @param arrIn
+	 */
+	public void printApplicationStatus(String[] arrIn) {
+		System.out.println("############################################");
+		System.out.println("#             Application Status           #");		
+		System.out.println("############################################");		
+		System.out.println("Job ID: " + arrIn[0]);
+		System.out.println("Name: " + arrIn[1]);
+		System.out.println("Justification: " + arrIn[2]);
+		System.out.println("Repo Link: " + arrIn[3]);
+		System.out.println("Additional Links: "); //TODO: Add loop here for array(additional)
+		System.out.println("############################################");
+		System.out.println();
+	}
 }

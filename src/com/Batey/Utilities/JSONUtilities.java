@@ -45,14 +45,31 @@ public class JSONUtilities {
 	 * @param obj
 	 * @return
 	 */
-	public Boolean verifyObjectSchema(JSONObject obj) {
-		
+	public Boolean verifyJobPostingSchema(JSONObject obj) {		
 		//Setup output variable
 		Boolean result = false;
 		
 		//Position and description are required by given schema		
 		if(obj.has(schemaMembers.ID.toString()) && obj.has(schemaMembers.POSITION.toString())
 				&& obj.has(schemaMembers.DESCRIPTION.toString())) {
+			result = true;			
+		}
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public Boolean verifyApplicationSchema(JSONObject obj) {		
+		//Setup output variable
+		Boolean result = false;
+		
+		//Name, justification, code and jobId are defined as necessary by schema		
+		if(obj.has(schemaMembers.JOBID.toString()) && obj.has(schemaMembers.NAME.toString())
+				&& obj.has(schemaMembers.CODE.toString()) 
+				&& obj.has(schemaMembers.JUSTIFICATION.toString())) {
 			result = true;			
 		}
 		return result;
@@ -91,5 +108,15 @@ public class JSONUtilities {
 		}
 		return temp;
 	}
-
+	
+	/**
+	 * 
+	 * @param arrIn
+	 */
+	public void populateApplicationArr(String[] arrIn, JSONObject obj) {
+		arrIn[0] = obj.getString(schemaMembers.JOBID.toString());
+		arrIn[1] = obj.getString(schemaMembers.NAME.toString());
+		arrIn[2] = obj.getString(schemaMembers.JUSTIFICATION.toString());
+		arrIn[3] = obj.getString(schemaMembers.CODE.toString());
+	}
 }

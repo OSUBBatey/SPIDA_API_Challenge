@@ -185,7 +185,10 @@ public class NetworkModule {
 	}
 	
 	/**
+	 * Clears the stored response data from the calling NetworkModule object.
 	 * 
+	 * @clears
+	 * 		this.data
 	 */
 	public void clearResponseData() {
 		this.data = "";

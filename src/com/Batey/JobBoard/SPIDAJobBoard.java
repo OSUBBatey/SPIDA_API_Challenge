@@ -84,7 +84,7 @@ public class SPIDAJobBoard {
 		if(jobList.size() > 0) {
 			//Verify Schema	and Print Valid Results	
 			for(JSONObject ele : jobList) {
-				if(jSONUtility.verifyObjectSchema(ele)) {
+				if(jSONUtility.verifyJobPostingSchema(ele)) {
 					//Pass Object to UI Printer for formatting
 					String id = ele.getString(schemaMembers.ID.toString());
 					String pos = ele.getString(schemaMembers.POSITION.toString());				
@@ -141,6 +141,8 @@ public class SPIDAJobBoard {
 				userValueArr[1] = sysPrinter.promptUserForName(console);
 				userValueArr[2] = sysPrinter.promptUserForJustification(console);	
 				userValueArr[3] = sysPrinter.promptUserForProjectLink(console);
+				
+				//TODO: Create array with these values
 				userValueArr[4] = sysPrinter.promptUserForAdditionalLink(console);
 				
 				//Create JSON Object
@@ -162,20 +164,37 @@ public class SPIDAJobBoard {
 		
 		//Setup Variables
 		String applicationID = sysPrinter.promptUserForStatusID(console);
-		String[] applicationAttributeArr = {"name", "justification", "code", "jobId", "additionalLinks"};
 		
-		//Clear Network Object Response Data
-		networkUtility.clearResponseData();
-		
-		//Get application Status
-		networkUtility.performGETRequest(JOBS_ENDPOINT, applicationID);
-		
-		//If application return data is not empty
-		if(networkUtility.getResponseData().length() > 0) {
-			//Display application Status
+		//Ensure properID is given
+		if(stringUtility.verifyIDString(applicationID)){			
+			String[] applicationAttributeArr = {"name", "justification", "code", "jobId", "additionalLinks"}; //TODO:MOVE THIS ELSEWHERE
 			
+			//Clear Network Object Response Data
+			networkUtility.clearResponseData();
+			
+			//Get application Status
+			networkUtility.performGETRequest(APPS_ENDPOINT, applicationID);
+			
+			//If application return data is not empty
+			if(networkUtility.getResponseData().length() > 0) {
+				
+				//Create JSON Object
+				JSONObject applicationJSON = new JSONObject(networkUtility.getResponseData());
+				
+				//Verify Application Schema
+				if(jSONUtility.verifyApplicationSchema(applicationJSON)) {
+					
+					//Create array for attributes
+					String[] appValueArr = new String[4];
+					
+					//Populate array
+					jSONUtility.populateApplicationArr(appValueArr, applicationJSON);
+					
+					//Display application Status
+					sysPrinter.printApplicationStatus(appValueArr);
+				}
+			}
 		}
-		
 	}
 			
 	private void cleanup() {
