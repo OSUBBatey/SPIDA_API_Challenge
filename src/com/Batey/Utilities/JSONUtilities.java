@@ -77,5 +77,19 @@ public class JSONUtilities {
 		//Return result
 		return outputList;
 	}
+	
+	/**
+	 * 
+	 * @param valueArray
+	 * @param keyArray
+	 * @return
+	 */
+	public JSONObject createJSONObjectFromArray(String[] valueArray, String[] keyArray) {
+		JSONObject temp = new JSONObject();
+		for(int i=0; i<valueArray.length-1;i++) {
+			temp.put(keyArray[i], valueArray[i]);
+		}
+		return temp;
+	}
 
 }

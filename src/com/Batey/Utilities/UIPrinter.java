@@ -10,7 +10,7 @@ import java.util.Scanner;
  * @author Brian Batey
  *
  */
-public class UIPrinter {
+public class UIPrinter {		
 	
 	/**
 	 * 
@@ -110,11 +110,60 @@ public class UIPrinter {
 	 * @param input
 	 * @return
 	 */
-	public String promptUserForJobID(Scanner input){
-		
+	public String promptUserForJobID(Scanner input){		
 		//TODO: SETUP ERROR CHECKING - empty string etc
 		String strOut = "";
 		System.out.print("Please enter the ID for the position you would like to apply for: ");		
+		strOut = input.nextLine();
+		return strOut;
+	}
+	
+	/**
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public String promptUserForName(Scanner input){		
+		//TODO: SETUP ERROR CHECKING - empty string etc
+		String strOut = "";
+		System.out.print("Please enter your Name for the application: ");		
+		strOut = input.nextLine();
+		return strOut;
+	}
+	
+	/**
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public String promptUserForJustification(Scanner input){		
+		//TODO: SETUP ERROR CHECKING - empty string etc
+		String strOut = "";
+		System.out.print("Enter justification as to why you are right for the position: ");		
+		strOut = input.nextLine();
+		return strOut;
+	}
+	
+	public String promptUserForProjectLink(Scanner input){		
+		//TODO: SETUP ERROR CHECKING - empty string etc
+		String strOut = "";
+		System.out.print("Enter a link to the repository containing this project: ");		
+		strOut = input.nextLine();
+		return strOut;
+	}
+	
+	public String promptUserForAdditionalLink(Scanner input){		
+		//TODO: SETUP ERROR CHECKING - empty string etc
+		String strOut = "";
+		System.out.print("Enter links to any additional projects that you would like to be viewed: ");		
+		strOut = input.nextLine();
+		return strOut;
+	}
+	
+	public String promptUserForStatusID(Scanner input){		
+		//TODO: SETUP ERROR CHECKING - empty string etc
+		String strOut = "";
+		System.out.print("Please enter the ID for the application you would like to check the status for: ");				
 		strOut = input.nextLine();
 		return strOut;
 	}

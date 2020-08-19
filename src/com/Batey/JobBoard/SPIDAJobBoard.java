@@ -3,17 +3,14 @@
  */
 package com.Batey.JobBoard;
 
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import org.json.JSONObject;
 
-import com.Batey.Utilities.NetworkModule;
-import com.Batey.Utilities.UIPrinter;
 import com.Batey.Enums.schemaMembers;
-import com.Batey.Utilities.JSONUtilities;
+import com.Batey.Utilities.*;
+
 
 /**
  * @author Brian Batey
@@ -21,11 +18,13 @@ import com.Batey.Utilities.JSONUtilities;
  */
 public class SPIDAJobBoard {
 	
-	JSONUtilities testJSON = new JSONUtilities();	
-	UIPrinter printer = new UIPrinter();
-	NetworkModule netMod = new NetworkModule();
+	JSONUtilities jSONUtility = new JSONUtilities();
+	StringUtilities stringUtility = new StringUtilities();
+	UIPrinter sysPrinter = new UIPrinter();
+	NetworkModule networkUtility = new NetworkModule();
 	Scanner console = new Scanner(System.in);
 	final String JOBS_ENDPOINT = "https://dev.spidasoftware.com/apply/jobs";
+	final String APPS_ENDPOINT = "https://dev.spidasoftware.com/apply/applications";
 	
 	
 	/**
@@ -37,12 +36,12 @@ public class SPIDAJobBoard {
 		int userMenuChoice = -1;	
 		
 		//Print UI/Menu Options
-		printer.printIntroUI();
-		printer.printUserMenu();
+		sysPrinter.printIntroUI();
+		sysPrinter.printUserMenu();
 		
 		
 		//Get User choice to control program loop		
-		userMenuChoice = printer.getMenuInput(console); //Returns an int .. fix this to use it for control loop		
+		userMenuChoice = sysPrinter.getMenuInput(console); //Returns an int .. fix this to use it for control loop		
 		
 		//Build this as a function with a switch
 		if(userMenuChoice == 1) {
@@ -51,10 +50,12 @@ public class SPIDAJobBoard {
 			
 		}else if(userMenuChoice == 2) {
 			//Begin Job Posting Procedure
-			printer.promptUserForJobID(console);
+			applyToPosting();
+			
 			
 		}else if(userMenuChoice == 3) {
 			//Perform Job Posting Status Lookup Procedure
+			checkApplicationStatus();
 		}
 		
 		
@@ -68,19 +69,22 @@ public class SPIDAJobBoard {
 	 */
 	private void displayAllJobPostings() {
 		
+		//Clear Network Object Response Data
+		networkUtility.clearResponseData();
+		
 		//Request all jobs from API Endpoint
-		netMod.performGETRequest(JOBS_ENDPOINT);
+		networkUtility.performGETRequest(JOBS_ENDPOINT);
 		
 		//Process data from request if successful
-		List<JSONObject> jobList = testJSON.parseJSONObjectFromArray(netMod.getResponseData());			
+		List<JSONObject> jobList = jSONUtility.parseJSONObjectFromArray(networkUtility.getResponseData());			
 		//Print header
-		printer.printJobPostingHeader();
+		sysPrinter.printJobPostingHeader();
 		
 		//Ensure Posts Exist and print to console
 		if(jobList.size() > 0) {
 			//Verify Schema	and Print Valid Results	
 			for(JSONObject ele : jobList) {
-				if(testJSON.verifyObjectSchema(ele)) {
+				if(jSONUtility.verifyObjectSchema(ele)) {
 					//Pass Object to UI Printer for formatting
 					String id = ele.getString(schemaMembers.ID.toString());
 					String pos = ele.getString(schemaMembers.POSITION.toString());				
@@ -88,13 +92,13 @@ public class SPIDAJobBoard {
 					
 					if(ele.has("requirements")) {
 						//Get requirements from object
-						List<String> reqList = testJSON.getArrayFromJSONObject(ele, schemaMembers.REQUIREMENTS.toString());
+						List<String> reqList = jSONUtility.getArrayFromJSONObject(ele, schemaMembers.REQUIREMENTS.toString());
 						
 						//Call Printer Class for job element
-						printer.printJobPosting(id, pos, reqList,  desc);
+						sysPrinter.printJobPosting(id, pos, reqList,  desc);
 					}else {
 						//Call Printer Class for job element
-						printer.printJobPosting(id, pos, desc);
+						sysPrinter.printJobPosting(id, pos, desc);
 					}
 				}
 			}
@@ -105,29 +109,77 @@ public class SPIDAJobBoard {
 	}
 	
 	private void applyToPosting() {
+		/*
+		 * userValueArr - String Array Representation -
+		 * 0 - job ID
+		 * 1 - user name
+		 * 2 - user justification
+		 * 3 - user project repo link
+		 * 4 - user additional links
+		 */
+		String[] userValueArr = new String[5];
+		String[] userKeyArr = {"jobId", "name", "justification", "code", "additionalLinks"}; //TODO: Move this out				
 		
-		//Setup variables 
-		String jobID;
-		String uName;
-		String uJustification;
-		String uRepoLink; //'code' attribute in JSON
-		String additionalLinks;
+		//Clear Network Object Response Data
+		networkUtility.clearResponseData();
 		
 		//Print User Input Prompt
-		jobID = printer.promptUserForJobID(console);
+		userValueArr[0] = sysPrinter.promptUserForJobID(console);		
 		
-		//Check to make sure job posting exists with given ID
-		
-		//Display prompts to get user inputs for posting attributes
-		
-		//Get name - string
-		
-		
-		
-		
+		//Check that id is of valid format (24 Hex characters)
+		if(stringUtility.verifyIDString(userValueArr[0])) {			
+			
+			//Check to make sure job posting exists with given ID
+			networkUtility.performGETRequest(JOBS_ENDPOINT, userValueArr[0]);
+			
+			//If response is not empty, ID exists
+			if(networkUtility.getResponseData().length() > 0) {
+				
+				//TODO:Display prompt with job posting and confirm with user that it is correct
+				
+				//Display prompts to get user inputs for posting attributes								
+				userValueArr[1] = sysPrinter.promptUserForName(console);
+				userValueArr[2] = sysPrinter.promptUserForJustification(console);	
+				userValueArr[3] = sysPrinter.promptUserForProjectLink(console);
+				userValueArr[4] = sysPrinter.promptUserForAdditionalLink(console);
+				
+				//Create JSON Object
+				JSONObject application = jSONUtility.createJSONObjectFromArray(userValueArr, userKeyArr);
+								
+				//POST JSON Object
+				networkUtility.performPOSTRequest(APPS_ENDPOINT, application.toString());
+				
+				//Display Return headers/ Success
+				System.out.println(networkUtility.getResponseData());
+			}
+		}
 	}
 	
+	/**
+	 * 
+	 */
+	private void checkApplicationStatus() {
+		
+		//Setup Variables
+		String applicationID = sysPrinter.promptUserForStatusID(console);
+		String[] applicationAttributeArr = {"name", "justification", "code", "jobId", "additionalLinks"};
+		
+		//Clear Network Object Response Data
+		networkUtility.clearResponseData();
+		
+		//Get application Status
+		networkUtility.performGETRequest(JOBS_ENDPOINT, applicationID);
+		
+		//If application return data is not empty
+		if(networkUtility.getResponseData().length() > 0) {
+			//Display application Status
+			
+		}
+		
+	}
+			
 	private void cleanup() {
 		console.close();
 	}
+	
 }
