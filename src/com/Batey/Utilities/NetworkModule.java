@@ -189,27 +189,32 @@ public class NetworkModule {
 			
 			//Cleanup
 			dataOut.close();
-						
-			//Get Response			
-			BufferedReader dataReader = new BufferedReader(new InputStreamReader(endpointConnection.getInputStream()));			
+			try {			
+				//Get Response			
+				BufferedReader dataReader = new BufferedReader(new InputStreamReader(endpointConnection.getInputStream()));			
 			
-			//Convert data stream to string and store in class object
-			this.data = responseToString(dataReader);
-			
+				//Convert data stream to string and store in class object
+				this.data = responseToString(dataReader);
+				
+				//Close stream
+				dataReader.close();
+			} catch (IOException e) {
+				System.err.printf ("Failed while reading from Input Stream: %s", e.getMessage());			
+				e.printStackTrace();
+			}
 			//Populate Response Variable
 			responseCode = endpointConnection.getResponseCode();
 			
-			//Cleanup
-			dataReader.close();			
+			//Cleanup						
 			endpointConnection.disconnect();
 			
 		} catch (MalformedURLException e) {
 			System.err.printf("Connection failed, possible invalid URL at %s", e.getMessage());	
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.printf ("Failed while reading bytes from Input Stream: %s", e.getMessage());			
+			System.err.printf ("Failed while reading bytes to Output Stream: %s", e.getMessage());			
 			e.printStackTrace();			
-		}
+		} 
 		//Return http connection response code
 		return responseCode;
 	}
