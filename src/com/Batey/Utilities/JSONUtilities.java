@@ -124,10 +124,11 @@ public class JSONUtilities {
 	}
 	
 	/**
-	 * 
-	 * @param valueArray
-	 * @param keyArray
+	 * Creates a JSON Object from a given Map. JSONObject key/values will reflect the key/value pairs found in the map with no nesting.
+	 * @param userMap
+	 * 		- a map containg key/value pairs to be transferred to a JSONObject
 	 * @return
+	 * 		- a JSONObject representing the values stored in the given map
 	 */
 	public JSONObject createJSONObjectFromMap(Map<String,String>userMap) {
 		
@@ -140,8 +141,11 @@ public class JSONUtilities {
 	}
 	
 	/**
-	 * 
-	 * @param arrIn
+	 * Generates a map representing an application post based on the schema at: https://dev.spidasoftware.com/apply/api
+	 * @param obj
+	 * 		- a well formed JSONObject based on the given schema
+	 * @returns
+	 * 		- a map representing the given JSONObject
 	 */
 	public Map<String,String> generateApplicationMap(JSONObject obj) {
 		Map<String,String> outputMap = new HashMap<String,String>();

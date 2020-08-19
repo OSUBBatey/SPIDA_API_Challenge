@@ -4,19 +4,20 @@
 package com.Batey.Utilities;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
-import com.Batey.Enums.schemaMembers;
 
 /**
+ * Printer Class used to print UI elements and user prompts to an output stream. Provides utilities 
+ * for printing Job Postings/Application Postings.
+ *
  * @author Brian Batey
  *
  */
 public class UIPrinter {		
 	
 	/**
-	 * 
+	 * Prints the Intro header for the program to the console.
 	 */
 	public void printIntroUI() {
 		System.out.println("############################################");
@@ -25,21 +26,22 @@ public class UIPrinter {
 	}
 	
 	/**
-	 * 
+	 * Prints each item in the given array in ascending numerical index order. Prepends each element with the index number starting from "1".
+	 * @param input
+	 * 			- an ordered array of String containing desired menu choices to be displayed
 	 */
-	public void printUserMenu() {
-		//Move this array outside of this method (make it a parameter)
-		String[] userChoiceArray = {"View All Job Postings", "Apply to a Job Posting", "Check Application Status", "Exit Program"};
-		
-		for(int i=1; i<=userChoiceArray.length; i++) {
-			System.out.println( i +". "+userChoiceArray[i-1]);
+	public void printUserMenu(String[] arrIn) {	
+		for(int i=1; i<=arrIn.length; i++) {
+			System.out.println( i +". "+ arrIn[i-1]);
 		}		
 	}
 	
 	/**
-	 * 
+	 * Prompts the user to input an integer value and then returns the given value. Can cause an exception to be thrown if user enters a non-numeric character.
 	 * @param input
+	 * 		- the input stream to use
 	 * @return
+	 * 		- an integer value
 	 */
 	public int getMenuInput(Scanner input) {		
 		//Initialize Variables		
@@ -56,11 +58,16 @@ public class UIPrinter {
 	}
 	
 	/**
+	 * Prints a job posting to the console. Format is based on the schema found at : https://dev.spidasoftware.com/apply/api.
 	 * 
 	 * @param id
+	 * 		- a string value representing the JobID
 	 * @param pos
+	 * 		- a string value representing the position title	 * 
 	 * @param reqList
+	 * 		- a List<String> containing desired requirements
 	 * @param desc
+	 * 		- a string value represeting the job description
 	 */
 	public void printJobPosting(String id, String pos, List<String> reqList, String desc) {				
 		System.out.println("############################################");
@@ -81,10 +88,16 @@ public class UIPrinter {
 	}
 	
 	/**
+	 * Prints a job posting to the console. 
+	 * Format is based on the schema found at : https://dev.spidasoftware.com/apply/api.
+	 * 
 	 * 
 	 * @param id
+	 * 		- a string value representing the JobID
 	 * @param pos
+	 * 		- a string value representing the position title		
 	 * @param desc
+	 * 		- a string value represeting the job description
 	 */
 	public void printJobPosting(String id, String pos, String desc) {
 		System.out.println();		
@@ -97,7 +110,7 @@ public class UIPrinter {
 	}
 	
 	/**
-	 * 
+	 * Prints a header for job positings to the console.
 	 */
 	public void printJobPostingHeader() {
 		System.out.println();
@@ -108,10 +121,13 @@ public class UIPrinter {
 	}
 	
 	/**
-	 * 
+	 * Creates a user prompt with the given message and returns a string based on the input stream. Does not allow blank input.
 	 * @param input
+	 * 		- the input stream 
 	 * @param message
+	 * 		- a string value representing the message to be displayed to the user
 	 * @return
+	 * 		- a string value representing the user's response
 	 */
 	public String promptUserWithMessage(Scanner input, String message){		
 		
@@ -127,19 +143,21 @@ public class UIPrinter {
 	}
 	
 	/**
-	 * 
+	 * Prints an application posting status. Format is based on the schema found at: https://dev.spidasoftware.com/apply/api
 	 * @param mapIn
+	 * 		- a map containing key/value pairs that conform to the given schema
 	 */
-	public void printApplicationStatus(Map<String,String> mapIn) {
-		System.out.println("############################################");
-		System.out.println("#             Application Status           #");		
-		System.out.println("############################################");		
-		System.out.println("Job ID: " + mapIn.get(schemaMembers.JOBID.toString()));
-		System.out.println("Name: " + mapIn.get(schemaMembers.NAME.toString()));
-		System.out.println("Justification: " + mapIn.get(schemaMembers.JUSTIFICATION.toString()));
-		System.out.println("Repo Link: " + mapIn.get(schemaMembers.CODE.toString()));
-		System.out.println("Additional Links: "); //TODO: Add loop here for array(additional)
-		System.out.println("############################################");
-		System.out.println();
+	public void printApplicationStatus(String jobID, String name, String justification, String code) {
+		
+				System.out.println("############################################");
+				System.out.println("#             Application Status           #");		
+				System.out.println("############################################");		
+				System.out.println("Job ID: " + jobID);
+				System.out.println("Name: " + name);
+				System.out.println("Justification: " + justification);
+				System.out.println("Repo Link: " + code);
+				System.out.println("Additional Links: "); //TODO: Add loop here for array(additional)
+				System.out.println("############################################");
+				System.out.println();						
 	}	
 }

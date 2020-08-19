@@ -16,6 +16,8 @@ import com.Batey.Utilities.*;
 
 
 /**
+ * A BBS type client program that interfaces with a RESTful API and displays job posting information.
+ * Allows for application to a posting and monitoring of the application status.
  * @author Brian Batey
  *
  */
@@ -32,6 +34,9 @@ public class SPIDAJobBoard {
 	public static final String JOBS_ENDPOINT = "https://dev.spidasoftware.com/apply/jobs";
 	public static final String APPS_ENDPOINT = "https://dev.spidasoftware.com/apply/applications";
 	
+	//Menu array for user menu choices
+	private final String[] userChoiceArray = {"View All Job Postings", "Apply to a Job Posting", "Check Application Status", "Exit Program"};
+	
 	
 	/**
 	 * Runs the program loop until user chooses to exit program.
@@ -45,7 +50,7 @@ public class SPIDAJobBoard {
 		while(userMenuChoice != 4) {
 			//Print UI/Menu Options
 			printUtility.printIntroUI();
-			printUtility.printUserMenu();
+			printUtility.printUserMenu(userChoiceArray);
 			
 			try {
 			//Get User choice to control program loop		
@@ -214,7 +219,7 @@ public class SPIDAJobBoard {
 					Map<String,String> userAppMap = jSONUtility.generateApplicationMap(applicationJSON);
 					
 					//Display application Status
-					printUtility.printApplicationStatus(userAppMap);
+					displayApplicationStatus(userAppMap);					
 				}else {
 					System.out.println("ERROR: Application Object does not follow given schema!!");
 				}
@@ -289,5 +294,26 @@ public class SPIDAJobBoard {
 			//Call Printer Class for job element
 			printUtility.printJobPosting(id, pos, desc);
 		}
+	}
+	
+	/**
+	 * Prints an application posting status stored in the given map. Format is based on the schema found at: https://dev.spidasoftware.com/apply/api
+	 * @param mapIn
+	 * 		- a Map<String,String> conforming to the given schema
+	 */
+	private void displayApplicationStatus(Map<String, String>mapIn) {
+		//Ensure keys exist
+		if(mapIn.containsKey(schemaMembers.JOBID.toString())
+			&&mapIn.containsKey(schemaMembers.NAME.toString())
+			&&mapIn.containsKey(schemaMembers.JUSTIFICATION.toString())
+			&&mapIn.containsKey(schemaMembers.CODE.toString())) {
+			//Call Print Utility with values
+			printUtility.printApplicationStatus(mapIn.get(schemaMembers.JOBID.toString()),
+					mapIn.get(schemaMembers.NAME.toString()), 
+					mapIn.get(schemaMembers.JUSTIFICATION.toString()), 
+					mapIn.get(schemaMembers.CODE.toString()));		
+		}else { //Something is wrong with the given Map print error
+			System.out.println("ERROR: Necessary keys not found in collection object! Unable to print application status!!");
+		}		
 	}
 }
