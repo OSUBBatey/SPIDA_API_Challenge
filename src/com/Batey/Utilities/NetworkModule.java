@@ -189,8 +189,7 @@ public class NetworkModule {
 			
 			//Cleanup
 			dataOut.close();
-			
-			//TODO: ADD ANOTHER TRY/CATCH HERE
+						
 			//Get Response			
 			BufferedReader dataReader = new BufferedReader(new InputStreamReader(endpointConnection.getInputStream()));			
 			
