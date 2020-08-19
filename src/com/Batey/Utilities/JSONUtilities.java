@@ -145,17 +145,31 @@ public class JSONUtilities {
 	 * @param obj
 	 * 		- a well formed JSONObject based on the given schema
 	 * @returns
-	 * 		- a map representing the given JSONObject
+	 * 		- a map representing the given JSONObject, an empty map on failure
 	 */
 	public Map<String,String> generateApplicationMap(JSONObject obj) {
 		Map<String,String> outputMap = new HashMap<String,String>();
 		
-		//Populate Map with attributes/values
-		outputMap.put(schemaMembers.JOBID.toString(), obj.getString(schemaMembers.JOBID.toString()));	
-		outputMap.put(schemaMembers.NAME.toString(), obj.getString(schemaMembers.NAME.toString()));
-		outputMap.put(schemaMembers.JUSTIFICATION.toString(), obj.getString(schemaMembers.JUSTIFICATION.toString()));
-		outputMap.put(schemaMembers.CODE.toString(), obj.getString(schemaMembers.CODE.toString()));	
-		
+		//Fill required members
+		if(obj.has(schemaMembers.JOBID.toString())
+				&&obj.has(schemaMembers.NAME.toString())
+				&&obj.has(schemaMembers.JUSTIFICATION.toString())
+				&&obj.has(schemaMembers.CODE.toString())
+				&&obj.has(schemaMembers.ID.toString()))
+				{
+			//Populate Map with attributes/values
+			outputMap.put(schemaMembers.ID.toString(), obj.getString(schemaMembers.ID.toString()));	
+			outputMap.put(schemaMembers.JOBID.toString(), obj.getString(schemaMembers.JOBID.toString()));	
+			outputMap.put(schemaMembers.NAME.toString(), obj.getString(schemaMembers.NAME.toString()));
+			outputMap.put(schemaMembers.JUSTIFICATION.toString(), obj.getString(schemaMembers.JUSTIFICATION.toString()));
+			outputMap.put(schemaMembers.CODE.toString(), obj.getString(schemaMembers.CODE.toString()));	
+		}		
+		//Check for and fill additionalLinks if they exist
+		if(obj.has(schemaMembers.ADDITIONAL.toString())){
+			//Retreive JSONArray from JSONObject, convert to string, and store
+			JSONArray addArr = obj.optJSONArray(schemaMembers.ADDITIONAL.toString());			
+			outputMap.put(schemaMembers.ADDITIONAL.toString(), addArr.toString());	
+		}		
 		return outputMap;
-	}
+	}	
 }

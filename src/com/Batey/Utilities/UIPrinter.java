@@ -147,16 +147,37 @@ public class UIPrinter {
 	 * @param mapIn
 	 * 		- a map containing key/value pairs that conform to the given schema
 	 */
-	public void printApplicationStatus(String jobID, String name, String justification, String code) {
+	public void printApplicationStatus(String appID, String jobID, String name, String justification, String code) {
 		
 				System.out.println("############################################");
 				System.out.println("#             Application Status           #");		
-				System.out.println("############################################");		
+				System.out.println("############################################");
+				System.out.println("Application ID: " + appID);
 				System.out.println("Job ID: " + jobID);
 				System.out.println("Name: " + name);
 				System.out.println("Justification: " + justification);
 				System.out.println("Repo Link: " + code);
-				System.out.println("Additional Links: "); //TODO: Add loop here for array(additional)
+				System.out.println("Additional Links: None ");
+				System.out.println("############################################");
+				System.out.println();						
+	}
+	
+	/**
+	 * Prints an application posting status. Format is based on the schema found at: https://dev.spidasoftware.com/apply/api
+	 * @param mapIn
+	 * 		- a map containing key/value pairs that conform to the given schema
+	 */
+	public void printApplicationStatus(String appID, String jobID, String name, String justification, String code, String additional) {
+		
+				System.out.println("############################################");
+				System.out.println("#             Application Status           #");		
+				System.out.println("############################################");
+				System.out.println("Application ID: " + appID);
+				System.out.println("Job ID: " + jobID);
+				System.out.println("Name: " + name);
+				System.out.println("Justification: " + justification);
+				System.out.println("Repo Link: " + code);
+				System.out.println("Additional Links: " + additional);
 				System.out.println("############################################");
 				System.out.println();						
 	}	

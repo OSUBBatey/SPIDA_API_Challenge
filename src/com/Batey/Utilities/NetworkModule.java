@@ -50,7 +50,10 @@ public class NetworkModule {
 	public int performGETRequest(String endpointURL){
 		
 		//Setup Variables
-		int responseCode = -1;		
+		int responseCode = -1;	
+		
+		//Cleanup before attempt
+		clearResponseData();
 		
 		try {
 			//Setup Endpoint Connection
@@ -93,7 +96,10 @@ public class NetworkModule {
 	public int performGETRequest(String endpointURL, String param){
 		
 		//Setup Variables
-		int responseCode = -1;		
+		int responseCode = -1;
+		
+		//Cleanup before attempt
+		clearResponseData();
 		
 		try {
 			//Setup Endpoint Connection
@@ -136,7 +142,10 @@ public class NetworkModule {
 	public int performPOSTRequest(String endpointURL, String jsonData){
 		
 		//Setup Variables
-		int responseCode = -1;		
+		int responseCode = -1;
+		
+		//Cleanup before attempt
+		clearResponseData();
 		
 		try {
 			//Setup Endpoint Connection

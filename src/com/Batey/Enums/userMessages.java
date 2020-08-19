@@ -13,8 +13,10 @@ public enum userMessages{
 	NAME("Please enter your Name for the application: "),
 	JUSTIFICATION("Enter justification as to why you are right for the position: "),
 	CODE("Enter a link to the repository containing this project: "),
-	ADDITIONAL("Enter links to any additional projects that you would like to be viewed: "),
-	STATUS("Please enter the ID for the application you would like to check the status for: ");
+	ADDITIONAL("Enter links separated by a comma to any additional projects you would like to share. "
+			+ "\n(Enter \"na\" if none are shared: )"),
+	STATUS("Please enter the ID for the application you would like to check the status for: "),
+	NA("na");
 	
 	private String type;
 	

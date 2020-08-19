@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.Batey.Enums.*;
@@ -165,20 +166,37 @@ public class SPIDAJobBoard {
 				//Display prompts to get user inputs for posting attributes	
 				userApplicationMap.put(schemaMembers.NAME.toString(), printUtility.promptUserWithMessage(console, userMessages.NAME.toString()));
 				userApplicationMap.put(schemaMembers.JUSTIFICATION.toString(), printUtility.promptUserWithMessage(console, userMessages.JUSTIFICATION.toString()));	
-				userApplicationMap.put(schemaMembers.CODE.toString(),printUtility.promptUserWithMessage(console, userMessages.CODE.toString()));
-				
-				//TODO: Remove this and make it another method that produces a string and make another method to append it to the JSON object
-				userApplicationMap.put(schemaMembers.ADDITIONAL.toString(), printUtility.promptUserWithMessage(console, userMessages.ADDITIONAL.toString()));
+				userApplicationMap.put(schemaMembers.CODE.toString(),printUtility.promptUserWithMessage(console, userMessages.CODE.toString()));							
+				String additionalLinks = printUtility.promptUserWithMessage(console, userMessages.ADDITIONAL.toString());
 				
 				//Create JSON Object
-				JSONObject application = jSONUtility.createJSONObjectFromMap(userApplicationMap);
+				JSONObject userAppJSON = jSONUtility.createJSONObjectFromMap(userApplicationMap);
+				
+				//If additionalLinks exist, create JSONArray and append to application Object
+				if(!additionalLinks.toLowerCase().equals(userMessages.NA.toString())) {
+					JSONArray addArr = new JSONArray(additionalLinks.split(","));
+					userAppJSON.put(schemaMembers.ADDITIONAL.toString(), addArr);
+				}
+				
+				//Clear Network Module Response Data
+				networkUtility.clearResponseData();
 															
 				//POST JSON Object
-				networkUtility.performPOSTRequest(APPS_ENDPOINT, application.toString());
+				networkUtility.performPOSTRequest(APPS_ENDPOINT, userAppJSON.toString());
 				
 				//Display Return headers/ Success
 				System.out.println("Posting Successful!!");
-				System.out.print("Server Response: ");
+				System.out.println();
+				
+				//Check if response is empty
+				if(!networkUtility.getResponseData().isEmpty()) {
+				//Create a representation of the server response and display
+					Map<String,String> userAppMap = jSONUtility.generateApplicationMap(new JSONObject(networkUtility.getResponseData()));
+					displayApplicationStatus(userAppMap);
+				}else {
+					System.out.println("ERROR: No Response from Server!!");
+				}
+				
 				System.out.println(networkUtility.getResponseData());
 				
 			}else {
@@ -306,12 +324,26 @@ public class SPIDAJobBoard {
 		if(mapIn.containsKey(schemaMembers.JOBID.toString())
 			&&mapIn.containsKey(schemaMembers.NAME.toString())
 			&&mapIn.containsKey(schemaMembers.JUSTIFICATION.toString())
-			&&mapIn.containsKey(schemaMembers.CODE.toString())) {
-			//Call Print Utility with values
-			printUtility.printApplicationStatus(mapIn.get(schemaMembers.JOBID.toString()),
-					mapIn.get(schemaMembers.NAME.toString()), 
-					mapIn.get(schemaMembers.JUSTIFICATION.toString()), 
-					mapIn.get(schemaMembers.CODE.toString()));		
+			&&mapIn.containsKey(schemaMembers.CODE.toString())
+			&&mapIn.containsKey(schemaMembers.ID.toString())) {
+			//Check for additional links
+			if(mapIn.containsKey(schemaMembers.ADDITIONAL.toString())) {
+				//Call Print Utility with values
+				printUtility.printApplicationStatus(mapIn.get(schemaMembers.ID.toString()),
+						mapIn.get(schemaMembers.JOBID.toString()),
+						mapIn.get(schemaMembers.NAME.toString()), 
+						mapIn.get(schemaMembers.JUSTIFICATION.toString()), 
+						mapIn.get(schemaMembers.CODE.toString()),
+						mapIn.get(schemaMembers.ADDITIONAL.toString()));	
+				
+			}else { //Additional parameters do not exist
+				//Call Print Utility with values
+				printUtility.printApplicationStatus(mapIn.get(schemaMembers.ID.toString()),
+						mapIn.get(schemaMembers.JOBID.toString()),
+						mapIn.get(schemaMembers.NAME.toString()), 
+						mapIn.get(schemaMembers.JUSTIFICATION.toString()), 
+						mapIn.get(schemaMembers.CODE.toString()));	
+			}				
 		}else { //Something is wrong with the given Map print error
 			System.out.println("ERROR: Necessary keys not found in collection object! Unable to print application status!!");
 		}		
