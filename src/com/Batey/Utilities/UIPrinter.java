@@ -4,7 +4,10 @@
 package com.Batey.Utilities;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
+import com.Batey.Enums.schemaMembers;
 
 /**
  * @author Brian Batey
@@ -104,86 +107,39 @@ public class UIPrinter {
 		System.out.println();
 	}
 	
-	
-	
 	/**
 	 * 
 	 * @param input
+	 * @param message
 	 * @return
 	 */
-	public String promptUserForJobID(Scanner input){		
-		//TODO: SETUP ERROR CHECKING - empty string etc
-		//TODO: CONSOLIDATE ALL THE FUNCTIONS LIKE THIS AND PASS AN ENUM FOR THE STRING
+	public String promptUserWithMessage(Scanner input, String message){		
+		
 		String strOut = "";
-		System.out.print("Please enter the ID for the position you would like to apply for: ");		
-		strOut = input.nextLine();
+		while(strOut.isEmpty()){
+			System.out.print(message);		
+			strOut = input.nextLine();
+			if(strOut.isEmpty()) {
+				System.out.println("ERROR: Entry must not be empty!!!");
+			}
+		}
 		return strOut;
 	}
 	
 	/**
 	 * 
-	 * @param input
-	 * @return
+	 * @param mapIn
 	 */
-	public String promptUserForName(Scanner input){		
-		//TODO: SETUP ERROR CHECKING - empty string etc
-		String strOut = "";
-		System.out.print("Please enter your Name for the application: ");		
-		strOut = input.nextLine();
-		return strOut;
-	}
-	
-	/**
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public String promptUserForJustification(Scanner input){		
-		//TODO: SETUP ERROR CHECKING - empty string etc
-		String strOut = "";
-		System.out.print("Enter justification as to why you are right for the position: ");		
-		strOut = input.nextLine();
-		return strOut;
-	}
-	
-	public String promptUserForProjectLink(Scanner input){		
-		//TODO: SETUP ERROR CHECKING - empty string etc
-		String strOut = "";
-		System.out.print("Enter a link to the repository containing this project: ");		
-		strOut = input.nextLine();
-		return strOut;
-	}
-	
-	public String promptUserForAdditionalLink(Scanner input){		
-		//TODO: SETUP ERROR CHECKING - empty string etc
-		String strOut = "";
-		System.out.print("Enter links to any additional projects that you would like to be viewed: ");		
-		strOut = input.nextLine();
-		return strOut;
-	}
-	
-	public String promptUserForStatusID(Scanner input){		
-		//TODO: SETUP ERROR CHECKING - empty string etc
-		String strOut = "";
-		System.out.print("Please enter the ID for the application you would like to check the status for: ");				
-		strOut = input.nextLine();
-		return strOut;
-	}
-	
-	/**
-	 * 
-	 * @param arrIn
-	 */
-	public void printApplicationStatus(String[] arrIn) {
+	public void printApplicationStatus(Map<String,String> mapIn) {
 		System.out.println("############################################");
 		System.out.println("#             Application Status           #");		
 		System.out.println("############################################");		
-		System.out.println("Job ID: " + arrIn[0]);
-		System.out.println("Name: " + arrIn[1]);
-		System.out.println("Justification: " + arrIn[2]);
-		System.out.println("Repo Link: " + arrIn[3]);
+		System.out.println("Job ID: " + mapIn.get(schemaMembers.JOBID.toString()));
+		System.out.println("Name: " + mapIn.get(schemaMembers.NAME.toString()));
+		System.out.println("Justification: " + mapIn.get(schemaMembers.JUSTIFICATION.toString()));
+		System.out.println("Repo Link: " + mapIn.get(schemaMembers.CODE.toString()));
 		System.out.println("Additional Links: "); //TODO: Add loop here for array(additional)
 		System.out.println("############################################");
 		System.out.println();
-	}
+	}	
 }

@@ -3,13 +3,15 @@
  */
 package com.Batey.JobBoard;
 
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.json.JSONObject;
 
-import com.Batey.Enums.schemaMembers;
+import com.Batey.Enums.*;
 import com.Batey.Utilities.*;
 
 
@@ -26,8 +28,9 @@ public class SPIDAJobBoard {
 	NetworkModule networkUtility = new NetworkModule();
 	Scanner console = new Scanner(System.in);
 	
-	final String JOBS_ENDPOINT = "https://dev.spidasoftware.com/apply/jobs";
-	final String APPS_ENDPOINT = "https://dev.spidasoftware.com/apply/applications";
+	//Endpoints
+	public static final String JOBS_ENDPOINT = "https://dev.spidasoftware.com/apply/jobs";
+	public static final String APPS_ENDPOINT = "https://dev.spidasoftware.com/apply/applications";
 	
 	
 	/**
@@ -53,39 +56,40 @@ public class SPIDAJobBoard {
 			}catch(InputMismatchException e) {
 				System.out.println("ERROR: Input must be numeric and in range!!");
 				console.nextLine();
-			}
-		}
-		
-		//Display Exit Message
-		System.out.print("Goodbye!!!");
-		
-		//Cleanup - release resources
-		cleanup();
+			}		
+		}		
 	}
 	
 	/**
-	 * 
+	 * Takes an integer as input and returns the function associated with that integer.
+	 * Non-integer input and out of range input will result in an error message being displayed.
 	 * @param input
+	 * 			- an integer value in the range of [1 - 4]
 	 */
 	private void selectFunction(int input) {
 		
-		if(input == 1) {
-			//Display all job postings
+		switch(input) {
+		
+		case 1://Display all job postings			
 			displayAllJobPostings();
+			break;
 			
-		}else if(input == 2) {
-			//Begin Job Posting Procedure
+		case 2: //Begin Job Posting Procedure			
 			applyToPosting();
+			break;
 			
-			
-		}else if(input == 3) {
-			//Perform Job Posting Status Lookup Procedure
+		case 3: // Perform Job Status Lookup Procedue
 			checkApplicationStatus();
-		}else {//Input is invalid or user has chosen to exit the program
-			if(input !=4) {
-				System.out.println("ERROR: Selection is out of Range. Please try again.");
-				System.out.println();
-			}			
+			break;
+			
+		case 4: // User has chose to exit, release resources and display exit message			
+			cleanup();			
+			System.out.println("Goodbye!!");			
+			break;
+			
+		default: //Input is invalid
+			System.out.println("ERROR: Selection is out of Range. Please try again.");
+			System.out.println();			
 		}
 	}
 	
@@ -111,26 +115,8 @@ public class SPIDAJobBoard {
 			
 			//Verify Schema	and Print Valid Results	
 			for(JSONObject ele : jobList) {
-				if(jSONUtility.verifyJobPostingSchema(ele)) {
-					
-					//Pass Object Values to UI Printer for formatting
-					String id = ele.getString(schemaMembers.ID.toString());
-					String pos = ele.getString(schemaMembers.POSITION.toString());				
-					String desc = ele.getString(schemaMembers.DESCRIPTION.toString());
-					
-					//Requirements is an optional attribute per the schema, check if it exists and act appropriately
-					if(ele.has("requirements")) {
-						//Get requirements from JSON object
-						List<String> reqList = jSONUtility.getArrayFromJSONObject(ele, schemaMembers.REQUIREMENTS.toString());
-						
-						//Call Printer Class for job element
-						printUtility.printJobPosting(id, pos, reqList,  desc);
-						
-					}else {//If Requirements attribute is not present
-						
-						//Call Printer Class for job element
-						printUtility.printJobPosting(id, pos, desc);
-					}
+				if(jSONUtility.verifyJobPostingSchema(ele)) {					
+					displayJobPosting(ele);
 				}else {//Report incorrect schema and continue
 					System.out.println("ERROR: An element with an incorrect schema was found!! \n Discarding element!");
 				}
@@ -146,45 +132,42 @@ public class SPIDAJobBoard {
 	 * response data to the console.  
 	 */
 	private void applyToPosting() {
-		/*
-		 * userValueArr - String Array Representation -
-		 * 0 - job ID
-		 * 1 - user name
-		 * 2 - user justification
-		 * 3 - user project repo link
-		 * 4 - user additional links
-		 */
-		String[] userValueArr = new String[5];
-		String[] userKeyArr = {"jobId", "name", "justification", "code", "additionalLinks"}; //TODO: Move this out				
+		
+		//Generate user map for storing application key/value atrribute data
+		Map<String,String> userApplicationMap = generateApplicationMap();
 		
 		//Clear Network Object Response Data
 		networkUtility.clearResponseData();
 		
-		//Print User Input Prompt
-		userValueArr[0] = printUtility.promptUserForJobID(console);		
+		//Print User Input Prompt and store returned value
+		userApplicationMap.put(schemaMembers.JOBID.toString(), printUtility.promptUserWithMessage(console, userMessages.ID.toString()));
+		
 		
 		//Check that id is of valid format (24 Hex characters)
-		if(stringUtility.verifyIDString(userValueArr[0])) {			
+		if(stringUtility.verifyIDString(userApplicationMap.get(schemaMembers.JOBID.toString()))) {			
 			
 			//Check to make sure job posting exists with given ID
-			networkUtility.performGETRequest(JOBS_ENDPOINT, userValueArr[0]);
+			networkUtility.performGETRequest(JOBS_ENDPOINT, userApplicationMap.get(schemaMembers.JOBID.toString()));
 			
 			//If response is not empty, ID exists
 			if(networkUtility.getResponseData().length() > 0) {
 				
-				//TODO:Display prompt with job posting and confirm with user that it is correct
+				//Display Job Post Selected
+				System.out.println();
+				System.out.println("You have selected the following position: ");
+				displayJobPosting(new JSONObject(networkUtility.getResponseData()));
 				
-				//Display prompts to get user inputs for posting attributes								
-				userValueArr[1] = printUtility.promptUserForName(console);
-				userValueArr[2] = printUtility.promptUserForJustification(console);	
-				userValueArr[3] = printUtility.promptUserForProjectLink(console);
+				//Display prompts to get user inputs for posting attributes	
+				userApplicationMap.put(schemaMembers.NAME.toString(), printUtility.promptUserWithMessage(console, userMessages.NAME.toString()));
+				userApplicationMap.put(schemaMembers.JUSTIFICATION.toString(), printUtility.promptUserWithMessage(console, userMessages.JUSTIFICATION.toString()));	
+				userApplicationMap.put(schemaMembers.CODE.toString(),printUtility.promptUserWithMessage(console, userMessages.CODE.toString()));
 				
-				//TODO: Create array with these values
-				userValueArr[4] = printUtility.promptUserForAdditionalLink(console);
+				//TODO: Remove this and make it another method that produces a string and make another method to append it to the JSON object
+				userApplicationMap.put(schemaMembers.ADDITIONAL.toString(), printUtility.promptUserWithMessage(console, userMessages.ADDITIONAL.toString()));
 				
 				//Create JSON Object
-				JSONObject application = jSONUtility.createJSONObjectFromArray(userValueArr, userKeyArr);
-								
+				JSONObject application = jSONUtility.createJSONObjectFromMap(userApplicationMap);
+															
 				//POST JSON Object
 				networkUtility.performPOSTRequest(APPS_ENDPOINT, application.toString());
 				
@@ -207,7 +190,7 @@ public class SPIDAJobBoard {
 	private void checkApplicationStatus() {
 		
 		//Setup Variables
-		String applicationID = printUtility.promptUserForStatusID(console);
+		String applicationID = printUtility.promptUserWithMessage(console, userMessages.STATUS.toString());
 		
 		//Ensure properID is given
 		if(stringUtility.verifyIDString(applicationID)){
@@ -226,15 +209,12 @@ public class SPIDAJobBoard {
 				
 				//Verify Application Schema
 				if(jSONUtility.verifyApplicationSchema(applicationJSON)) {
-					
-					//Create array for attributes
-					String[] appValueArr = new String[4];
-					
+															
 					//Populate array
-					jSONUtility.populateApplicationArr(appValueArr, applicationJSON);
+					Map<String,String> userAppMap = jSONUtility.generateApplicationMap(applicationJSON);
 					
 					//Display application Status
-					printUtility.printApplicationStatus(appValueArr);
+					printUtility.printApplicationStatus(userAppMap);
 				}else {
 					System.out.println("ERROR: Application Object does not follow given schema!!");
 				}
@@ -245,9 +225,69 @@ public class SPIDAJobBoard {
 			System.out.println("ERROR: ID is an invalid format. Must be 24 Hex Characters!");
 		}
 	}
-			
+	
+	
+	/**
+	 * Perform cleanup procedures. Closes open resources.
+	 */
 	private void cleanup() {
 		console.close();
 	}
 	
+	/**
+	 * Creates a Map for storing user values associated with creating an job application posting. The keys represent
+	 * all attributes necessary for creating an application JSON Object as defined by the schema at : https://dev.spidasoftware.com/apply/api .	 * 
+	 *
+	 * Key Values added are as follows: 
+	 * jobId
+	 * name
+	 * justification
+	 * code
+	 * additional links
+	 * 
+	 * 
+	 * @return
+	 * 		- a Map<String,String> with Application attributes as keys and blank strings as values.
+	 */
+	private Map<String,String> generateApplicationMap(){
+		
+		//List of possible attributes
+		String[] userKeyArr = {"jobId", "name", "justification", "code", "additionalLinks"};
+		
+		//Create output object
+		Map<String, String> output = new HashMap<String,String>();
+		
+		//Iterate userKeyArr and put each item in the map
+		for(String item: userKeyArr) {
+			output.put(item, "");
+		}
+		//Return resultant output
+		return output;
+	}
+	
+	/**
+	 * Prints the attributes and values of a well-formed job posting JSON Object to the console. Utilizes the schema
+	 * defined at https://dev.spidasoftware.com/apply/api
+	 * @param obj
+	 * 		- a well formed JSON Object representing a Job Posting 
+	 */
+	private void displayJobPosting(JSONObject obj) {		
+		//Pass Object Values to UI Printer for formatting
+		String id = obj.getString(schemaMembers.ID.toString());
+		String pos = obj.getString(schemaMembers.POSITION.toString());				
+		String desc = obj.getString(schemaMembers.DESCRIPTION.toString());
+		
+		//Requirements is an optional attribute per the schema, check if it exists and act appropriately
+		if(obj.has("requirements")) {
+			//Get requirements from JSON object
+			List<String> reqList = jSONUtility.getArrayFromJSONObject(obj, schemaMembers.REQUIREMENTS.toString());
+			
+			//Call Printer Class for job element
+			printUtility.printJobPosting(id, pos, reqList,  desc);
+			
+		}else {//If Requirements attribute is not present			
+			//Call Printer Class for job element
+			printUtility.printJobPosting(id, pos, desc);
+		}
+	}
 }

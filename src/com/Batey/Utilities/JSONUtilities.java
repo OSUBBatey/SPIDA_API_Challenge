@@ -5,7 +5,9 @@ package com.Batey.Utilities;
 
 import com.Batey.Enums.schemaMembers;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,9 +19,15 @@ import org.json.JSONObject;
 public class JSONUtilities {
 	
 	/**
+	 * Takes a String representation of a valid JSON Array that contains one or more JSON Objects and
+	 * parses the JSON objects into an ArrayList for return. 
 	 * 
+	 * @throws
+	 *  	- Throws JSONException with malformed JSON input.
 	 * @param input
+	 * 		- A well formed String representing a JSON Array containing one or more JSON objects
 	 * @return
+	 * 		- ArrayList<JSONObject> containing the JSON Objects parsed from the given input
 	 */
 	public List<JSONObject> parseJSONObjectFromArray(String input){
 		//Create output list
@@ -41,26 +49,37 @@ public class JSONUtilities {
 	}
 	
 	/**
+	 * Verifies the JSON schema of a given JSON Object for a Job Posting.
+	 * Schema members required are : "position, description".
+	 * Returns a boolean value.
+	 * Schema was adapted from: https://dev.spidasoftware.com/apply/api 
 	 * 
 	 * @param obj
+	 * 		- The JSON 
 	 * @return
+	 * 		- Boolean value of true if schema is valid, false otherwise.
 	 */
 	public Boolean verifyJobPostingSchema(JSONObject obj) {		
 		//Setup output variable
 		Boolean result = false;
 		
 		//Position and description are required by given schema		
-		if(obj.has(schemaMembers.ID.toString()) && obj.has(schemaMembers.POSITION.toString())
-				&& obj.has(schemaMembers.DESCRIPTION.toString())) {
+		if(obj.has(schemaMembers.POSITION.toString())&& obj.has(schemaMembers.DESCRIPTION.toString())) {
 			result = true;			
 		}
 		return result;
 	}
 	
 	/**
+	 * Verifies the JSON schema of a given JSON Object for an Application posting.
+	 * Schema members required are : "jobId, justification, code, and name".
+	 * Returns a boolean value.
+	 * Schema was adapted from: https://dev.spidasoftware.com/apply/api 
 	 * 
 	 * @param obj
+	 * 		- The JSON 
 	 * @return
+	 * 		- Boolean value of true if schema is valid, false otherwise.
 	 */
 	public Boolean verifyApplicationSchema(JSONObject obj) {		
 		//Setup output variable
@@ -76,10 +95,13 @@ public class JSONUtilities {
 	}
 	
 	/**
-	 * 
+	 * Parses a JSON array from a JSON Object. Returns a List<String> for each element retrieved.
 	 * @param obj
+	 * 		- JSONObject containing an array to be parsed
 	 * @param arrName
+	 * 		- String value representing the attribute name of the array in the given JSONObject @obj
 	 * @return
+	 * 		- a List<String> containing all parsed values found in the array
 	 */
 	public List<String> getArrayFromJSONObject(JSONObject obj, String arrName) {
 		
@@ -107,11 +129,12 @@ public class JSONUtilities {
 	 * @param keyArray
 	 * @return
 	 */
-	public JSONObject createJSONObjectFromArray(String[] valueArray, String[] keyArray) {
-		//TODO: MAYBE USE A MAP INSTEAD
+	public JSONObject createJSONObjectFromMap(Map<String,String>userMap) {
+		
+		//Create JSON object and populate with map entries
 		JSONObject temp = new JSONObject();
-		for(int i=0; i<valueArray.length-1;i++) {
-			temp.put(keyArray[i], valueArray[i]);
+		for(Map.Entry<String,String> ele : userMap.entrySet()) {			
+			temp.put(ele.getKey(), ele.getValue());
 		}
 		return temp;
 	}
@@ -120,10 +143,15 @@ public class JSONUtilities {
 	 * 
 	 * @param arrIn
 	 */
-	public void populateApplicationArr(String[] arrIn, JSONObject obj) {		
-		arrIn[0] = obj.getString(schemaMembers.JOBID.toString());
-		arrIn[1] = obj.getString(schemaMembers.NAME.toString());
-		arrIn[2] = obj.getString(schemaMembers.JUSTIFICATION.toString());
-		arrIn[3] = obj.getString(schemaMembers.CODE.toString());
+	public Map<String,String> generateApplicationMap(JSONObject obj) {
+		Map<String,String> outputMap = new HashMap<String,String>();
+		
+		//Populate Map with attributes/values
+		outputMap.put(schemaMembers.JOBID.toString(), obj.getString(schemaMembers.JOBID.toString()));	
+		outputMap.put(schemaMembers.NAME.toString(), obj.getString(schemaMembers.NAME.toString()));
+		outputMap.put(schemaMembers.JUSTIFICATION.toString(), obj.getString(schemaMembers.JUSTIFICATION.toString()));
+		outputMap.put(schemaMembers.CODE.toString(), obj.getString(schemaMembers.CODE.toString()));	
+		
+		return outputMap;
 	}
 }
