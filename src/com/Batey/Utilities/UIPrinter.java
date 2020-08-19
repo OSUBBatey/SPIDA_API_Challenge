@@ -41,12 +41,11 @@ public class UIPrinter {
 	public int getMenuInput(Scanner input) {		
 		//Initialize Variables		
 		int output = -1;
-		
-		//TODO: SETUP ERROR CHECKING - make sure numeric and not empty/in range						
+										
 		System.out.println();
 		System.out.print("Please Enter The Number of Your Selection: ");
 		
-		//Get User Input
+		//Get User Input		
 		output = input.nextInt();
 		input.nextLine();
 		

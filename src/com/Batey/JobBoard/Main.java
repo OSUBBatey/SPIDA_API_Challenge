@@ -6,5 +6,4 @@ public class Main {
 		SPIDAJobBoard jobBoard = new SPIDAJobBoard();
 		jobBoard.run();
 	}
-
 }

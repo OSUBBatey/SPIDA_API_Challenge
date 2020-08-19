@@ -3,6 +3,7 @@
  */
 package com.Batey.JobBoard;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,6 +19,7 @@ import com.Batey.Utilities.*;
  */
 public class SPIDAJobBoard {
 	
+	//Create Needed Objects
 	JSONUtilities jSONUtility = new JSONUtilities();
 	StringUtilities stringUtility = new StringUtilities();
 	UIPrinter sysPrinter = new UIPrinter();
@@ -28,41 +30,62 @@ public class SPIDAJobBoard {
 	
 	
 	/**
-	 * 
+	 * Runs the program loop until user chooses to exit program.
 	 */
 	public void run() {
 		
-		//Variables
+		//Run loop variable
 		int userMenuChoice = -1;	
 		
-		//Print UI/Menu Options
-		sysPrinter.printIntroUI();
-		sysPrinter.printUserMenu();
-		
-		
-		//Get User choice to control program loop		
-		userMenuChoice = sysPrinter.getMenuInput(console); //Returns an int .. fix this to use it for control loop		
-		
-		//Build this as a function with a switch
-		if(userMenuChoice == 1) {
-			//Display results if successful, prompt user for another action if not
-			displayAllJobPostings();
+		//Get User Choice and Perform Appropriate Operation
+		while(userMenuChoice != 4) {
+			//Print UI/Menu Options
+			sysPrinter.printIntroUI();
+			sysPrinter.printUserMenu();
 			
-		}else if(userMenuChoice == 2) {
-			//Begin Job Posting Procedure
-			applyToPosting();
+			try {
+			//Get User choice to control program loop		
+			userMenuChoice = sysPrinter.getMenuInput(console);		
+			//Select Function
+			selectFunction(userMenuChoice);
 			
-			
-		}else if(userMenuChoice == 3) {
-			//Perform Job Posting Status Lookup Procedure
-			checkApplicationStatus();
+			}catch(InputMismatchException e) {
+				System.out.println("ERROR: Input must be numeric and in range!!");
+				console.nextLine();
+			}
 		}
 		
+		System.out.print("Goodbye!!!");
 		
 		//Cleanup - release resources
 		cleanup();
 	}
 	
+	/**
+	 * 
+	 * @param input
+	 */
+	private void selectFunction(int input) {
+		
+		if(input == 1) {
+			//Display results if successful, prompt user for another action if not
+			displayAllJobPostings();
+			
+		}else if(input == 2) {
+			//Begin Job Posting Procedure
+			applyToPosting();
+			
+			
+		}else if(input == 3) {
+			//Perform Job Posting Status Lookup Procedure
+			checkApplicationStatus();
+		}else {
+			if(input !=4) {
+				System.out.println("ERROR: Selection is out of Range. Please try again.");
+				System.out.println();
+			}			
+		}
+	}
 	
 	/**
 	 * Write this stuff.
@@ -77,11 +100,12 @@ public class SPIDAJobBoard {
 		
 		//Process data from request if successful
 		List<JSONObject> jobList = jSONUtility.parseJSONObjectFromArray(networkUtility.getResponseData());			
-		//Print header
-		sysPrinter.printJobPostingHeader();
-		
+				
 		//Ensure Posts Exist and print to console
-		if(jobList.size() > 0) {
+		if(jobList.size() > 0) {			
+			//Print header
+			sysPrinter.printJobPostingHeader();
+			
 			//Verify Schema	and Print Valid Results	
 			for(JSONObject ele : jobList) {
 				if(jSONUtility.verifyJobPostingSchema(ele)) {
@@ -100,14 +124,18 @@ public class SPIDAJobBoard {
 						//Call Printer Class for job element
 						sysPrinter.printJobPosting(id, pos, desc);
 					}
+				}else {
+					System.out.println("ERROR: An element with an incorrect schema was found!! \n Discarding element!");
 				}
-			}
-			
+			}			
 		}else{ // If no jobs exist
-			System.out.print("No positions are currently available.");
+			System.out.print("ERROR: No positions are currently available.");
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void applyToPosting() {
 		/*
 		 * userValueArr - String Array Representation -
@@ -153,7 +181,11 @@ public class SPIDAJobBoard {
 				
 				//Display Return headers/ Success
 				System.out.println(networkUtility.getResponseData());
+			}else {
+				System.out.println("ERROR: No Job Posting found with that ID!!");
 			}
+		}else {
+			System.out.println("ERROR: ID is an invalid format. Must be 24 Hex Characters!");
 		}
 	}
 	
@@ -192,8 +224,14 @@ public class SPIDAJobBoard {
 					
 					//Display application Status
 					sysPrinter.printApplicationStatus(appValueArr);
+				}else {
+					System.out.println("ERROR: Application Object does not follow given schema!!");
 				}
+			}else {
+				System.out.println("ERROR: No Application was found with the given ID!!");
 			}
+		}else {
+			System.out.println("ERROR: ID is an invalid format. Must be 24 Hex Characters!");
 		}
 	}
 			
