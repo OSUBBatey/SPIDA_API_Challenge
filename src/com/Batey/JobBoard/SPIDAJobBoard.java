@@ -195,10 +195,7 @@ public class SPIDAJobBoard {
 					displayApplicationStatus(userAppMap);
 				}else {
 					System.out.println("ERROR: No Response from Server!!");
-				}
-				
-				System.out.println(networkUtility.getResponseData());
-				
+				}				
 			}else {
 				System.out.println("ERROR: No Job Posting found with that ID!!");
 			}

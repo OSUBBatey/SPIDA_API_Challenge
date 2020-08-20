@@ -30,14 +30,14 @@ public class UIPrinter {
 	 * @param input
 	 * 			- an ordered array of String containing desired menu choices to be displayed
 	 */
-	public void printUserMenu(String[] arrIn) {	
+	public void printUserMenu(String[] arrIn) {		
 		for(int i=1; i<=arrIn.length; i++) {
 			System.out.println( i +". "+ arrIn[i-1]);
 		}		
 	}
 	
 	/**
-	 * Prompts the user to input an integer value and then returns the given value. Can cause an exception to be thrown if user enters a non-numeric character.
+	 * Prompts the user to input an integer value and then returns the given value. Input must be numeric and within Integer Range.
 	 * @param input
 	 * 		- the input stream to use
 	 * @return
@@ -135,6 +135,7 @@ public class UIPrinter {
 		while(strOut.isEmpty()){
 			System.out.print(message);		
 			strOut = input.nextLine();
+			strOut.trim();
 			if(strOut.isEmpty()) {
 				System.out.println("ERROR: Entry must not be empty!!!");
 			}

@@ -14,8 +14,8 @@ import java.util.Random;
 import com.Batey.Utilities.StringUtilities;
 
 /**
+ * Tests for StringUtilities Class
  * @author Brian Batey
- *
  */
 class StringUtilitiesTest {
 	 StringUtilities classUnderTest;
