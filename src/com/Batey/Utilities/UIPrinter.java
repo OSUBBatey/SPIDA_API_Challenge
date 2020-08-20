@@ -4,7 +4,10 @@
 package com.Batey.Utilities;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+
+import com.Batey.Enums.schemaMembers;
 
 
 /**
@@ -181,5 +184,40 @@ public class UIPrinter {
 				System.out.println("Additional Links: " + additional);
 				System.out.println("############################################");
 				System.out.println();						
-	}	
+	}
+	
+	/**
+	 * Prints an application posting status stored in the given map. Format is based on the schema found at: https://dev.spidasoftware.com/apply/api
+	 * @param mapIn
+	 * 		- a Map<String,String> conforming to the given schema
+	 */
+	public void displayApplicationStatus(Map<String, String>mapIn) {
+		//Ensure keys exist
+		if(mapIn.containsKey(schemaMembers.JOBID.toString())
+			&&mapIn.containsKey(schemaMembers.NAME.toString())
+			&&mapIn.containsKey(schemaMembers.JUSTIFICATION.toString())
+			&&mapIn.containsKey(schemaMembers.CODE.toString())
+			&&mapIn.containsKey(schemaMembers.ID.toString())) {
+			//Check for additional links
+			if(mapIn.containsKey(schemaMembers.ADDITIONAL.toString())) {
+				//Call Print Utility with values
+				printApplicationStatus(mapIn.get(schemaMembers.ID.toString()),
+						mapIn.get(schemaMembers.JOBID.toString()),
+						mapIn.get(schemaMembers.NAME.toString()), 
+						mapIn.get(schemaMembers.JUSTIFICATION.toString()), 
+						mapIn.get(schemaMembers.CODE.toString()),
+						mapIn.get(schemaMembers.ADDITIONAL.toString()));	
+				
+			}else { //Additional parameters do not exist
+				//Call Print Utility with values
+				printApplicationStatus(mapIn.get(schemaMembers.ID.toString()),
+						mapIn.get(schemaMembers.JOBID.toString()),
+						mapIn.get(schemaMembers.NAME.toString()), 
+						mapIn.get(schemaMembers.JUSTIFICATION.toString()), 
+						mapIn.get(schemaMembers.CODE.toString()));	
+			}				
+		}else { //Something is wrong with the given Map print error
+			System.out.println("ERROR: Necessary keys not found in collection object! Unable to print application status!!");
+		}		
+	}
 }

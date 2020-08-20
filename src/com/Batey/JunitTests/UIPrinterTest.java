@@ -10,8 +10,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -20,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.Batey.Enums.schemaMembers;
 import com.Batey.Utilities.UIPrinter;
 
 /**
@@ -474,4 +477,101 @@ class UIPrinterTest {
 		assertEquals(expected,actual);
 	}
 
+	/**
+	 * Tests for displayApplicationStatus
+	 */
+	
+	/*
+	 * Valid Input no Additional
+	 */
+	@Test
+	final void testDisplayApplicationStatusValidNoAdditional() {
+		//Setup 
+		Map<String,String> expectedMap = new HashMap<String,String>();
+		expectedMap.put(schemaMembers.JOBID.toString(), "JID");
+		expectedMap.put(schemaMembers.NAME.toString(), "name-wa");
+		expectedMap.put(schemaMembers.JUSTIFICATION.toString(), "justify");
+		expectedMap.put(schemaMembers.ID.toString(), "ID");
+		expectedMap.put(schemaMembers.CODE.toString(), "code");
+		
+		String expected = "############################################\r\n" + 
+				"#             Application Status           #\r\n" + 
+				"############################################\r\n" + 
+				"Application ID: ID\r\n" + 
+				"Job ID: JID\r\n" + 
+				"Name: name-wa\r\n" + 
+				"Justification: justify\r\n" + 
+				"Repo Link: code\r\n" + 
+				"Additional Links: None \r\n" + 
+				"############################################";
+		
+		//Call class under test
+		classUnderTest.displayApplicationStatus(expectedMap);
+		
+		//Get actual and remove line endings
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
+		
+		//Assert
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Valid Input with Additional
+	 */
+	@Test
+	final void testDisplayApplicationStatusValidWithAdditional() {
+		//Setup 
+		Map<String,String> expectedMap = new HashMap<String,String>();
+		expectedMap.put(schemaMembers.JOBID.toString(), "JID");
+		expectedMap.put(schemaMembers.NAME.toString(), "name-wa");
+		expectedMap.put(schemaMembers.JUSTIFICATION.toString(), "justify");
+		expectedMap.put(schemaMembers.ID.toString(), "ID");
+		expectedMap.put(schemaMembers.CODE.toString(), "code");
+		expectedMap.put(schemaMembers.ADDITIONAL.toString(), "something.com");
+		
+		String expected = "############################################\r\n" + 
+				"#             Application Status           #\r\n" + 
+				"############################################\r\n" + 
+				"Application ID: ID\r\n" + 
+				"Job ID: JID\r\n" + 
+				"Name: name-wa\r\n" + 
+				"Justification: justify\r\n" + 
+				"Repo Link: code\r\n" + 
+				"Additional Links: something.com\r\n" + 
+				"############################################";
+		
+		//Call class under test
+		classUnderTest.displayApplicationStatus(expectedMap);
+		
+		//Get actual and remove line endings
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
+				
+		//Assert
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Invalid Input with Additional
+	 */
+	@Test
+	final void testDisplayApplicationStatusInvalidWithAdditional() {
+		//Setup 
+		Map<String,String> expectedMap = new HashMap<String,String>();
+		expectedMap.put(schemaMembers.JOBID.toString(), "JID");
+		expectedMap.put(schemaMembers.NAME.toString(), "name-wa");
+		expectedMap.put(schemaMembers.JUSTIFICATION.toString(), "justify");
+		expectedMap.put(schemaMembers.ID.toString(), "ID");		
+		expectedMap.put(schemaMembers.ADDITIONAL.toString(), "something.com");
+		
+		String expected = "ERROR: Necessary keys not found in collection object! Unable to print application status";
+		
+		//Call class under test
+		classUnderTest.displayApplicationStatus(expectedMap);
+		
+		//Get actual and remove line endings
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
+				
+		//Assert
+		assertEquals(expected, actual);
+	}
 }

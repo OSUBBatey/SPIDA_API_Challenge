@@ -400,8 +400,7 @@ class JSONUtilitiesTest {
 	
 	@Test
 	final void testGenerateApplicationMapValidObjNoAdditional() {
-		//Setup
-		Boolean expected = true;
+		//Setup		
 		JSONObject obj = new JSONObject();
 		
 		obj.put(schemaMembers.JOBID.toString(), "values");
@@ -428,8 +427,7 @@ class JSONUtilitiesTest {
 	
 	@Test
 	final void testGenerateApplicationMapValidObjWithAdditional() {
-		//Setup
-		Boolean expected = true;
+		//Setup		
 		String expectedVal;
 		JSONObject obj = new JSONObject();
 		JSONArray arr = new JSONArray("[values5]");
