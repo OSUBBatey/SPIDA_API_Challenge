@@ -1,5 +1,5 @@
 # SPIDA_API_Challenge
-A RESTful client for reading a job board, posting a job, and checking the status of the posting.
+A RESTful client for reading a job board, posting a job, and checking the status of the posting through a command line interface.
 
 ## Compilation Instructions:
 To compile the program, download/unzip the archive and then navigate to the "src" folder.
