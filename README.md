@@ -10,6 +10,7 @@ $ javac -cp "../lib/json-20200518.jar" ./com/Batey/JobBoard/*.java ./com/Batey/E
 ```
 ## **To run the program:**
 From the "src" directory enter the following command:
+```
 $ java -cp .;../lib/json-20200518.jar com/Batey/JobBoard/Main
 ```
 *You may also load the project in your desired IDE and run it.*
