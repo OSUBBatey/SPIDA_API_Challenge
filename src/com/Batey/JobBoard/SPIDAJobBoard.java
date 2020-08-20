@@ -24,12 +24,12 @@ import com.Batey.Utilities.*;
  */
 public class SPIDAJobBoard {
 	
-	//Create Needed Objects
-	JSONUtilities jSONUtility = new JSONUtilities();
-	StringUtilities stringUtility = new StringUtilities();
-	UIPrinter printUtility = new UIPrinter();
-	NetworkModule networkUtility = new NetworkModule();
-	Scanner console = new Scanner(System.in);
+	//Create Objects
+	private JSONUtilities jSONUtility = new JSONUtilities();
+	private StringUtilities stringUtility = new StringUtilities();
+	private UIPrinter printUtility = new UIPrinter();
+	private NetworkModule networkUtility = new NetworkModule();
+	private Scanner console = new Scanner(System.in);
 	
 	//Endpoints
 	public static final String JOBS_ENDPOINT = "https://dev.spidasoftware.com/apply/jobs";
