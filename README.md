@@ -17,3 +17,21 @@ $ java -cp .;../lib/json-20200518.jar com/Batey/JobBoard/Main
 
 ## JUnit
 Junit tests are included under the JunitTests folder.   
+
+##Project Structure
+SPIDA_API_CHALLENGE
+ ├───bin
+│   └───com
+│       └───Batey
+│           ├───Enums
+│           ├───JobBoard
+│           ├───JunitTests
+│           └───Utilities
+├───lib
+└───src
+    └───com
+        └───Batey
+            ├───Enums
+            ├───JobBoard
+            ├───JunitTests
+            └───Utilities
