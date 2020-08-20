@@ -35,7 +35,7 @@ public class NetworkModule {
 			  sb.append(currentLine);
 			}
 		} catch (IOException e) {
-			System.err.printf ("Failed while reading from input stream: %s", e.getMessage());	
+			System.err.printf ("Failed while reading from input stream @responseToString: %s", e.getMessage());	
 			e.printStackTrace();
 		}
 	    return sb.toString();
@@ -88,10 +88,10 @@ public class NetworkModule {
 			endpointConnection.disconnect();
 			
 		} catch (MalformedURLException e) {
-			System.err.printf("Connection failed, possible invalid URL at %s", e.getMessage());	
-			e.printStackTrace();
+			System.err.printf("Connection failed, possible invalid URL at %s @performGETRequest", e.getMessage());	
+			System.out.println();
 		} catch (IOException e) {
-			System.err.printf ("Failed while reading bytes from Input Stream: %s", e.getMessage());			
+			System.err.printf ("Failed while reading bytes from Input Stream @performGETRequest: %s", e.getMessage());			
 			e.printStackTrace();			
 		}
 		
@@ -138,10 +138,10 @@ public class NetworkModule {
 			endpointConnection.disconnect();
 			
 		} catch (MalformedURLException e) {
-			System.err.printf("Connection failed, possible invalid URL at %s", e.getMessage());	
+			System.err.printf("Connection failed, possible invalid URL at %s @performGETRequest", e.getMessage());	
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.printf ("Failed while reading bytes from Input Stream: %s", e.getMessage());			
+			System.err.printf ("Failed while reading bytes from Input Stream @performGETRequest: %s", e.getMessage());			
 			e.printStackTrace();			
 		}
 		
@@ -199,8 +199,8 @@ public class NetworkModule {
 				//Close stream
 				dataReader.close();
 			} catch (IOException e) {
-				System.err.printf ("Failed while reading from Input Stream: %s", e.getMessage());			
-				e.printStackTrace();
+				System.err.printf ("Failed while reading from Input Stream @performPOSTRequest: %s", e.getMessage());
+				System.out.println();
 			}
 			//Populate Response Variable
 			responseCode = endpointConnection.getResponseCode();
@@ -209,11 +209,11 @@ public class NetworkModule {
 			endpointConnection.disconnect();
 			
 		} catch (MalformedURLException e) {
-			System.err.printf("Connection failed, possible invalid URL at %s", e.getMessage());	
-			e.printStackTrace();
+			System.err.printf("Connection failed, possible invalid URL at %s @performPOSTRequest", e.getMessage());
+			System.out.println();
 		} catch (IOException e) {
-			System.err.printf ("Failed while reading bytes to Output Stream: %s", e.getMessage());			
-			e.printStackTrace();			
+			System.err.printf ("Failed while reading bytes to Output Stream @performPOSTRequest: %s", e.getMessage());
+			System.out.println();
 		} 
 		//Return http connection response code
 		return responseCode;
