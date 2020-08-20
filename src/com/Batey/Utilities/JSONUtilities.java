@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
+ * A collection of JSON parsing and verification utilities.
  * @author Brian Batey
  *
  */
@@ -27,9 +28,9 @@ public class JSONUtilities {
 	 * @param input
 	 * 		- A well formed String representing a JSON Array containing one or more JSON objects
 	 * @return
-	 * 		- ArrayList<JSONObject> containing the JSON Objects parsed from the given input
+	 * 		- ArrayList<JSONObject> containing the JSON Objects parsed from the given input. Returns empty List on any error.
 	 */
-	public List<JSONObject> parseJSONObjectFromArray(String input){
+	public List<JSONObject> parseJSONObjectFromJSONArray(String input){
 		//Create output list
 		List<JSONObject> outputArr = new ArrayList<JSONObject>();
 				
@@ -42,7 +43,8 @@ public class JSONUtilities {
 				outputArr.add(objectArr.optJSONObject(i));
 			}
 		}catch (org.json.JSONException e){			
-			System.err.printf("Invalid JSON structure recieved: %s", e.getMessage());			
+			System.err.printf("Invalid JSON structure received @ parseJSONObjectFromJSONArray: %s", e.getMessage());
+			System.err.println();
 		}
 		//Return result
 		return outputArr;
@@ -101,7 +103,7 @@ public class JSONUtilities {
 	 * @param arrName
 	 * 		- String value representing the attribute name of the array in the given JSONObject @obj
 	 * @return
-	 * 		- a List<String> containing all parsed values found in the array
+	 * 		- a List of String containing all parsed values found in the array. Empty list if error occurs or no array is found.
 	 */
 	public List<String> getArrayFromJSONObject(JSONObject obj, String arrName) {
 		
@@ -117,7 +119,6 @@ public class JSONUtilities {
 				outputList.add(buffer.getString(i));
 			}
 		}catch (org.json.JSONException e){			
-			System.err.printf("Invalid JSON array structure received: %s", e.getMessage());			
 		}
 		//Return result
 		return outputList;

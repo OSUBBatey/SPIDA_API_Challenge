@@ -112,7 +112,7 @@ public class SPIDAJobBoard {
 		networkUtility.performGETRequest(JOBS_ENDPOINT);
 		
 		//Process data from request if successful
-		List<JSONObject> jobList = jSONUtility.parseJSONObjectFromArray(networkUtility.getResponseData());			
+		List<JSONObject> jobList = jSONUtility.parseJSONObjectFromJSONArray(networkUtility.getResponseData());			
 				
 		//Ensure Posts Exist and print to console
 		if(jobList.size() > 0) {			
