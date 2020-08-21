@@ -331,7 +331,7 @@ class UIPrinterTest {
 		
 		//Get actual and remove line endings
 		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
-	
+
 		//Assert
 		assertEquals(expected,actual);
 	}
@@ -360,7 +360,7 @@ class UIPrinterTest {
 		
 		//Get actual and remove line endings
 		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
-	
+
 		//Assert
 		assertEquals(expected,actual);
 	}
@@ -543,9 +543,9 @@ class UIPrinterTest {
 		//Call class under test
 		classUnderTest.displayApplicationStatus(expectedMap);
 		
-		//Get actual and remove line endings
+		//Get actual and remove last line endings
 		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
-				
+					
 		//Assert
 		assertEquals(expected, actual);
 	}
@@ -572,6 +572,130 @@ class UIPrinterTest {
 		String actual = contentStream.toString().substring(0, contentStream.toString().length()-4);
 				
 		//Assert
+		assertEquals(expected, actual);
+	}
+	
+	/**
+	 * tokenPrint tests
+	 */
+	
+	/*
+	 * Empty input
+	 */
+	
+	@Test
+	final void testTokenPrintEmptyString() {
+		
+		//Setup
+		String expected = "";
+		
+		//Perform operation
+		classUnderTest.tokenPrinter(10, "", " ");
+		
+		//Get actual
+		String actual = contentStream.toString().substring(0, contentStream.toString().length());
+		
+		assertEquals(expected, actual);
+	}
+	
+
+	/*
+	 * Zero Width Input
+	 */
+	
+	@Test
+	final void testTokenPrintZeroWidth() {
+		
+		//Setup
+		String expected = "Some Stuff To Print";
+		
+		//Perform operation
+		classUnderTest.tokenPrinter(0, "Some Stuff To Print", " ");
+		
+		//Get actual and remove line ending
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-2);
+		
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Empty Regex
+	 */
+	
+	@Test
+	final void testTokenPrintEmptyRegex() {
+		
+		//Setup
+		String expected = "Some Stuff To Print";
+		
+		//Perform operation
+		classUnderTest.tokenPrinter(50, "Some Stuff To Print", "");
+		
+		//Get actual and remove line ending
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-2);
+		
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Single Token less than width
+	 */
+	
+	@Test
+	final void testTokenPrintSingleToken() {
+		
+		//Setup
+		String expected = "Some";
+		
+		//Perform operation
+		classUnderTest.tokenPrinter(50, "Some", " ");
+		
+		//Get actual and remove line ending
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-2);
+		
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Single Token longer than width
+	 */
+	
+	@Test
+	final void testTokenPrintSingleTokenlonger() {
+		
+		//Setup
+		String expected = "Something";
+		
+		//Perform operation
+		classUnderTest.tokenPrinter(5, "Something", " ");
+		
+		//Get actual and remove line ending
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-2);
+		
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Multi Token - some longer than width of 5 some shorter 
+	 */
+	
+	@Test
+	final void testTokenPrintMultiToken() {
+		
+		//Setup
+		String expected = "Some\r\n" + 
+				"other\r\n" + 
+				"text\r\n" + 
+				"to display\r\n" + 
+				"to the\r\n" + 
+				"screen";
+		
+		//Perform operation
+		classUnderTest.tokenPrinter(5, "Some other text to display to the screen", " ");
+		
+		//Get actual and remove line ending
+		String actual = contentStream.toString().substring(0, contentStream.toString().length()-2);
+		
 		assertEquals(expected, actual);
 	}
 }

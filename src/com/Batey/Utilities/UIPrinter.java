@@ -6,7 +6,6 @@ package com.Batey.Utilities;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
 import com.Batey.Enums.schemaMembers;
 
 
@@ -83,7 +82,7 @@ public class UIPrinter {
 		for(int i=0; i<reqList.size(); i++) {
 			
 			System.out.print(" " + reqList.get(i));
-			if(i!=reqList.size()-1) {System.out.print(",");} // Print a comma for every entry but the last
+			if(i!=reqList.size()-1) {System.out.println(",");} // Print a comma and carriage return for every entry but the last
 		}
 		System.out.println(); // Print New Line		
 		System.out.println("############################################");
@@ -179,9 +178,9 @@ public class UIPrinter {
 				System.out.println("Application ID: " + appID);
 				System.out.println("Job ID: " + jobID);
 				System.out.println("Name: " + name);
-				System.out.println("Justification: " + justification);
+				tokenPrinter(100, "Justification: " + justification, " ");
 				System.out.println("Repo Link: " + code);
-				System.out.println("Additional Links: " + additional);
+				System.out.println ("Additional Links: " + additional);
 				System.out.println("############################################");
 				System.out.println();						
 	}
@@ -219,5 +218,55 @@ public class UIPrinter {
 		}else { //Something is wrong with the given Map print error
 			System.out.println("ERROR: Necessary keys not found in collection object! Unable to print application status!!");
 		}		
+	}
+	
+	/**
+	 * Tokenizes a string by the given regular expression and prints tokens with a trailing whitespace until the given character width is reached 
+	 * or surpassed. Once width is reached or surpassed, a new line character is printed and the remaining tokens are printed following the same 
+	 * procedure.
+	 * 
+	 * @param width
+	 * 		- an integer value of the desired character width
+	 * @param input
+	 * 		- the string to split printing 
+	 * @param regex
+	 * 		- a string representing a regex expression for delimiting
+	 * 		
+	 */
+	public void tokenPrinter(int width, String input, String regex) {
+				
+		//Ensure width is not zero and width is longer than input string.
+		if(width > 0 && width <= input.length()) {
+			
+			//Tokenize string by regular expression
+			String[] tokenArr = input.split(regex);
+			
+			//Setup variables
+			StringBuilder sb = new StringBuilder();
+			int charCount = 0;
+			
+			for (int i = 0; i<tokenArr.length;i++) {
+				
+				//Increment character count by token size plus one for whitespace replacement
+				charCount += tokenArr[i].length()+1;
+				
+				//If charCount is less than desired max character width append the token with trailing whitespace
+				if(charCount < width) {
+					sb.append(tokenArr[i]+" ");
+				}else {//Else token is an end token so append and print line with carriage return
+					sb.append(tokenArr[i]);
+					System.out.println(sb.toString());
+					
+					//Clear StringBuilder and reset charCount to Zero
+					sb.setLength(0);
+					charCount = 0;
+				}
+			}
+		}else {//Else print original string if it is not empty
+			if(input.length() > 0) {
+				System.out.println(input);
+			}			
+		}		
+		
 	}
 }
