@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 
 
@@ -16,6 +17,9 @@ import java.net.URL;
  *
  */
 public class NetworkModule {
+	
+	// Connection/Read timeout value
+	private final int TIMEOUT = 5000;
 	
 	//Class object Variables
 	private String data = "";
@@ -71,11 +75,17 @@ public class NetworkModule {
 			URL url = new URL(endpointURL);
 			HttpURLConnection endpointConnection = (HttpURLConnection) url.openConnection();
 			
+			//Set timeout to connect
+			endpointConnection.setConnectTimeout(TIMEOUT);
+			
 			//Set property to GET
 			endpointConnection.setRequestMethod("GET");
 			
 			//Populate Response Variable
 			responseCode = endpointConnection.getResponseCode();
+			
+			//Set timeout to read
+			endpointConnection.setReadTimeout(TIMEOUT);
 			
 			//Create data streams 
 			BufferedReader dataReader = new BufferedReader(new InputStreamReader(endpointConnection.getInputStream()));			
@@ -121,11 +131,17 @@ public class NetworkModule {
 			URL url = new URL(endpointURL + "/" + param);
 			HttpURLConnection endpointConnection = (HttpURLConnection) url.openConnection();
 			
+			//Set timeout to connect
+			endpointConnection.setConnectTimeout(TIMEOUT);
+			
 			//Set property to GET
 			endpointConnection.setRequestMethod("GET");		
 			
 			//Populate Response Variable
 			responseCode = endpointConnection.getResponseCode();
+			
+			//Set timeout to read
+			endpointConnection.setReadTimeout(TIMEOUT);
 			
 			//Create data streams 
 			BufferedReader dataReader = new BufferedReader(new InputStreamReader(endpointConnection.getInputStream()));	
@@ -174,6 +190,9 @@ public class NetworkModule {
 			URL url = new URL(endpointURL);
 			HttpURLConnection endpointConnection = (HttpURLConnection) url.openConnection();
 			
+			//Set timeout to connect
+			endpointConnection.setConnectTimeout(TIMEOUT);
+			
 			//Set property to POST
 			endpointConnection.setRequestMethod("POST");
 			
@@ -189,7 +208,10 @@ public class NetworkModule {
 			
 			//Cleanup
 			dataOut.close();
-			try {			
+			try {
+				//Set timeout to read
+				endpointConnection.setReadTimeout(TIMEOUT);
+				
 				//Get Response			
 				BufferedReader dataReader = new BufferedReader(new InputStreamReader(endpointConnection.getInputStream()));			
 			
